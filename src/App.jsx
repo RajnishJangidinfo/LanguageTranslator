@@ -6,6 +6,7 @@ import OutputSection from './components/OutputSection';
 import SettingsModal from './components/SettingsModal';
 import Footer from './components/Footer';
 import { improveEnglish, translateText } from './services/aiService';
+import { Terminal } from 'lucide-react';
 
 export default function App() {
   const [inputText, setInputText] = useState('');
@@ -17,6 +18,28 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Spanish');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sourceTextType, setSourceTextType] = useState('improve'); // 'improve' | 'translate'
+
+  const [showPromptResult, setShowPromptResult] = useState(false);
+
+  const getImprovePrompt = () => {
+    return `You are an expert English copyeditor. Improve the grammar, spelling, punctuation, vocabulary, and readability of the text. 
+Preserve the meaning and format. Do NOT wrap output in code blocks. Return ONLY the improved text.
+
+Text to process:
+"""
+${inputText}
+"""`;
+  };
+
+  const getTranslatePrompt = () => {
+    return `You are a professional translator. Translate the following text into ${selectedLanguage}.
+Preserve meaning and format. Do NOT wrap output in code blocks. Return ONLY the translated text.
+
+Text to process:
+"""
+${inputText}
+"""`;
+  };
 
   // Retrieve API key from environment variable or localStorage
   const [apiKey, setApiKey] = useState(() => {
@@ -155,11 +178,64 @@ export default function App() {
             <Actions 
               onImprove={handleImproveEnglish} 
               onTranslate={handleTranslate} 
+              onShowPrompt={() => setShowPromptResult(true)}
               selectedLanguage={selectedLanguage}
               setSelectedLanguage={setSelectedLanguage}
               isLoading={isLoading}
               hasInput={inputText.trim().length > 0}
             />
+
+            {/* Prompt View Section */}
+            {showPromptResult && inputText.trim() && (
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold text-sm">
+                    <Terminal className="w-4 h-4 text-emerald-500" />
+                    <span>Generated AI Prompts</span>
+                  </div>
+                  <button 
+                    onClick={() => setShowPromptResult(false)}
+                    className="text-xs text-slate-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 font-medium"
+                  >
+                    Close
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Prompt 1: Improve */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Refine & Edit Prompt</span>
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(getImprovePrompt())}
+                        className="text-3xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-300 px-2 py-1 rounded font-medium transition-colors"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <pre className="w-full bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-3xs font-mono text-slate-600 dark:text-slate-400 whitespace-pre-wrap select-all leading-relaxed h-[160px] overflow-y-auto">
+                      {getImprovePrompt()}
+                    </pre>
+                  </div>
+                  
+                  {/* Prompt 2: Translate */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Translate to {selectedLanguage} Prompt</span>
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(getTranslatePrompt())}
+                        className="text-3xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-300 px-2 py-1 rounded font-medium transition-colors"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <pre className="w-full bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-3xs font-mono text-slate-600 dark:text-slate-400 whitespace-pre-wrap select-all leading-relaxed h-[160px] overflow-y-auto">
+                      {getTranslatePrompt()}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Output Card / Spinner / Error (rendered if output, loading, or error is present) */}
             {(outputText || isLoading || error) && (

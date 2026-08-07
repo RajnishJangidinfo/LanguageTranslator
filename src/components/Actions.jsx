@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Globe, ArrowRight } from 'lucide-react';
+import { Sparkles, Globe, ArrowRight, Terminal } from 'lucide-react';
 
 const LANGUAGES = [
   { code: 'English', label: 'English' },
@@ -26,13 +26,14 @@ const LANGUAGES = [
 export default function Actions({ 
   onImprove, 
   onTranslate, 
+  onShowPrompt,
   selectedLanguage, 
   setSelectedLanguage, 
   isLoading, 
   hasInput 
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
       
       {/* Action 1: Improve English */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between gap-4">
@@ -106,6 +107,31 @@ export default function Actions({
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      {/* Action 3: View Prompt */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between gap-4">
+        <div>
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1 flex items-center gap-1.5">
+            <Terminal className="w-4 h-4 text-emerald-500" />
+            Option 3: View Prompt
+          </h4>
+          <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+            Generate and view the raw prompt text sent to the Gemini API, built using your current text input.
+          </p>
+        </div>
+        <button
+          onClick={onShowPrompt}
+          disabled={isLoading || !hasInput}
+          className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 ${
+            isLoading || !hasInput
+              ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200/50 dark:border-slate-700 cursor-not-allowed'
+              : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm hover:shadow-emerald-500/10 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0'
+          }`}
+        >
+          <Terminal className="w-4 h-4" />
+          <span>Prompt</span>
+        </button>
       </div>
 
     </div>

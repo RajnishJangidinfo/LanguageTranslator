@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlignLeft, FileText } from 'lucide-react';
+import { AlignLeft } from 'lucide-react';
+import SpellCheckEditor from './SpellCheckEditor';
 
 export default function TextInput({ value, onChange, placeholder = "Enter or paste your text here..." }) {
   
@@ -29,12 +30,11 @@ export default function TextInput({ value, onChange, placeholder = "Enter or pas
 
       {/* Text Area */}
       <div className="relative">
-        <textarea
+        <SpellCheckEditor
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={onChange}
           placeholder={placeholder}
           rows={7}
-          className="w-full px-5 py-4 bg-transparent text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-base leading-relaxed border-none focus:outline-none resize-y min-h-[160px]"
         />
         
         {value && (

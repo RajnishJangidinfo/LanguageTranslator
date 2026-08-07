@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Trash2, Volume2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Copy, Check, Trash2, Volume2, AlertCircle } from 'lucide-react';
 
 export default function OutputSection({ 
   value, 
